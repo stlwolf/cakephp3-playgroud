@@ -3,104 +3,84 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 
-/**
- * Posts Controller
- *
- * @property \App\Model\Table\PostsTable $Posts
- *
- * @method \App\Model\Entity\Post[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
- */
 class PostsController extends AppController
 {
-    /**
-     * Index method
-     *
-     * @return \Cake\Http\Response|null
-     */
+    public function initialize()
+    {
+        parent::initialize();
+        $this->loadComponent('RequestHandler');
+    }
+
     public function index()
     {
-        $posts = $this->paginate($this->Posts);
-
-        $this->set(compact('posts'));
-    }
-
-    /**
-     * View method
-     *
-     * @param string|null $id Post id.
-     * @return \Cake\Http\Response|null
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function view($id = null)
-    {
-        $post = $this->Posts->get($id, [
-            'contain' => []
+        $posts = $this->Posts->find('all');
+        $this->set([
+            'posts' => $posts,
+            '_serialize' => ['posts']
         ]);
 
-        $this->set('post', $post);
+        $this->RequestHandler->renderAs($this, 'json'); // Add this line
     }
 
-    /**
-     * Add method
-     *
-     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
-     */
+    public function view($id)
+    {
+        $post = $this->Posts->get($id);
+        $this->set([
+            'post' => $post,
+            '_serialize' => ['post']
+        ]);
+
+        $this->RequestHandler->renderAs($this, 'json'); // Add this line
+    }
+
     public function add()
     {
-        $post = $this->Posts->newEntity();
-        if ($this->request->is('post')) {
-            $post = $this->Posts->patchEntity($post, $this->request->getData());
-            if ($this->Posts->save($post)) {
-                $this->Flash->success(__('The post has been saved.'));
-
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The post could not be saved. Please, try again.'));
-        }
-        $this->set(compact('post'));
-    }
-
-    /**
-     * Edit method
-     *
-     * @param string|null $id Post id.
-     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function edit($id = null)
-    {
-        $post = $this->Posts->get($id, [
-            'contain' => []
-        ]);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $post = $this->Posts->patchEntity($post, $this->request->getData());
-            if ($this->Posts->save($post)) {
-                $this->Flash->success(__('The post has been saved.'));
-
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The post could not be saved. Please, try again.'));
-        }
-        $this->set(compact('post'));
-    }
-
-    /**
-     * Delete method
-     *
-     * @param string|null $id Post id.
-     * @return \Cake\Http\Response|null Redirects to index.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function delete($id = null)
-    {
-        $this->request->allowMethod(['post', 'delete']);
-        $post = $this->Posts->get($id);
-        if ($this->Posts->delete($post)) {
-            $this->Flash->success(__('The post has been deleted.'));
+        $post = $this->Posts->newEntity($this->request->getData());
+        if ($this->Posts->save($post)) {
+            $message = 'Saved';
         } else {
-            $this->Flash->error(__('The post could not be deleted. Please, try again.'));
+            $message = 'Error';
         }
+        $this->set([
+            'message' => $message,
+            'post' => $post,
+            '_serialize' => ['message', 'post']
+        ]);
 
-        return $this->redirect(['action' => 'index']);
+        $this->RequestHandler->renderAs($this, 'json'); // Add this line
+    }
+
+    public function edit($id)
+    {
+        $post = $this->Posts->get($id);
+        if ($this->request->is(['post', 'put'])) {
+            $post = $this->Posts->patchEntity($post, $this->request->getData());
+            if ($this->Posts->save($post)) {
+                $message = 'Saved';
+            } else {
+                $message = 'Error';
+            }
+        }
+        $this->set([
+            'message' => $message,
+            '_serialize' => ['message']
+        ]);
+
+        $this->RequestHandler->renderAs($this, 'json'); // Add this line
+    }
+
+    public function delete($id)
+    {
+        $post = $this->Posts->get($id);
+        $message = 'Deleted';
+        if (!$this->Posts->delete($post)) {
+            $message = 'Error';
+        }
+        $this->set([
+            'message' => $message,
+            '_serialize' => ['message']
+        ]);
+
+        $this->RequestHandler->renderAs($this, 'json'); // Add this line
     }
 }
