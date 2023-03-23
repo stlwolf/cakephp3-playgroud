@@ -50,7 +50,7 @@
     "config": {
         "sort-packages": true,
         "allow-plugins": {
-            "cakephp/plugin-installer": false
+            "cakephp/plugin-installer": true
         }
     }
 }
