@@ -12,7 +12,7 @@ services:
       - db
       - php-fpm
   php-fpm:
-    image: php:7.4-fpm
+    build: .
     volumes:
       - .:/var/www/html
     depends_on:
@@ -20,18 +20,22 @@ services:
   db:
     image: mysql:5.7
     environment:
-      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: cakephp
       MYSQL_USER: cakephp
       MYSQL_PASSWORD: cakephp
+      MYSQL_ROOT_PASSWORD: root
     volumes:
-      - db-data:/var/lib/mysql
+      - db_data:/var/lib/mysql
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     environment:
       PMA_HOST: db
+      PMA_USER: cakephp
+      PMA_PASSWORD: cakephp
     ports:
       - "8080:80"
+    depends_on:
+      - db
 
 volumes:
-  db-data:
+  db_data: {}
