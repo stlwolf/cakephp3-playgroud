@@ -3,16 +3,19 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 
-class PostsController extends AppController
+class PostsController extends ApiController
 {
     public function initialize()
     {
+        $this->log('PostsController initialize', LOG_DEBUG);
         parent::initialize();
         $this->loadComponent('RequestHandler');
     }
 
     public function index()
     {
+        $this->log('PostsController index', LOG_DEBUG);
+
         $posts = $this->Posts->find('all');
         $this->set([
             'posts' => $posts,
@@ -24,6 +27,8 @@ class PostsController extends AppController
 
     public function view($id)
     {
+        $this->log('PostsController view', LOG_DEBUG);
+
         $post = $this->Posts->get($id);
         $this->set([
             'post' => $post,
@@ -35,6 +40,8 @@ class PostsController extends AppController
 
     public function add()
     {
+        $this->log('PostsController add', LOG_DEBUG);
+
         $post = $this->Posts->newEntity($this->request->getData());
         if ($this->Posts->save($post)) {
             $message = 'Saved';
@@ -52,6 +59,8 @@ class PostsController extends AppController
 
     public function edit($id)
     {
+        $this->log('PostsController edit', LOG_DEBUG);
+
         $post = $this->Posts->get($id);
         if ($this->request->is(['post', 'put'])) {
             $post = $this->Posts->patchEntity($post, $this->request->getData());
@@ -71,6 +80,8 @@ class PostsController extends AppController
 
     public function delete($id)
     {
+        $this->log('PostsController delete', LOG_DEBUG);
+
         $post = $this->Posts->get($id);
         $message = 'Deleted';
         if (!$this->Posts->delete($post)) {
