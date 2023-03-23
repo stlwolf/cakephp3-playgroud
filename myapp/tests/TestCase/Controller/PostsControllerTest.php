@@ -2,72 +2,32 @@
 namespace App\Test\TestCase\Controller;
 
 use App\Controller\PostsController;
+use Cake\Datasource\ConnectionManager;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
-/**
- * App\Controller\PostsController Test Case
- */
 class PostsControllerTest extends TestCase
 {
     use IntegrationTestTrait;
 
-    /**
-     * Fixtures
-     *
-     * @var array
-     */
-    public $fixtures = [
-        'app.Posts'
-    ];
+    public $Posts;
+    
+    public function setUp()
+    {
+        parent::setUp();
 
-    /**
-     * Test index method
-     *
-     * @return void
-     */
+        $this->Posts = TableRegistry::getTableLocator()->get('Posts', [
+            'connectionName' => 'test',
+        ]);
+    }
+
     public function testIndex()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->get('/posts');
+        $this->assertResponseOk();
+        $this->assertContentType('application/json');
     }
 
-    /**
-     * Test view method
-     *
-     * @return void
-     */
-    public function testView()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
-
-    /**
-     * Test add method
-     *
-     * @return void
-     */
-    public function testAdd()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
-
-    /**
-     * Test edit method
-     *
-     * @return void
-     */
-    public function testEdit()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
-
-    /**
-     * Test delete method
-     *
-     * @return void
-     */
-    public function testDelete()
-    {
-        $this->markTestIncomplete('Not implemented yet.');
-    }
+    // Add more test methods for other actions (view, add, edit, delete)
 }

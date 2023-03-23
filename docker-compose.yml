@@ -11,12 +11,16 @@ services:
     depends_on:
       - db
       - php-fpm
+    networks:
+      - cakephp_network
   php-fpm:
     build: .
     volumes:
       - .:/var/www/html
     depends_on:
       - db
+    networks:
+      - cakephp_network
   db:
     image: mysql:5.7
     environment:
@@ -26,6 +30,19 @@ services:
       MYSQL_ROOT_PASSWORD: root
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - cakephp_network
+  test_db:
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: your_test_db_name
+      MYSQL_USER: your_test_db_username
+      MYSQL_PASSWORD: your_test_db_password
+      MYSQL_ROOT_PASSWORD: your_mysql_root_password
+    volumes:
+      - test_db_data:/var/lib/mysql
+    networks:
+      - cakephp_network
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     environment:
@@ -36,6 +53,12 @@ services:
       - "8080:80"
     depends_on:
       - db
+    networks:
+      - cakephp_network
+
+networks:
+  cakephp_network:
 
 volumes:
   db_data: {}
+  test_db_data: {}
