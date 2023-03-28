@@ -13,3 +13,6 @@ migrate_test_db:
 
 test:
 	docker exec -w /var/www/html/myapp cakephp3-playgroud_php-fpm_1 vendor/bin/phpunit tests/TestCase/Controller/PostsControllerTest.php
+
+php:
+	docker exec -it cakephp3-playgroud_php-fpm_1 bash
